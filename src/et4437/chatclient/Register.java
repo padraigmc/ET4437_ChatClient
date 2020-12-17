@@ -8,21 +8,14 @@ package et4437.chatclient;
 import chatwebservice.ChatWebService;
 import chatwebservice.ChatWebService_Service;
 import java.awt.CardLayout;
-import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -35,7 +28,7 @@ public class Register extends JPanel {
     
     private static ChatWebService chatServiceProxy;
     private SpringLayout layout;
-    private JButton register;
+    private JButton registerButton;
     private JButton previousButton;
     private JTextField nameField;
     private JTextField usernameField;
@@ -108,14 +101,15 @@ public class Register extends JPanel {
         layout.putConstraint(SpringLayout.WEST, previousButton,6, SpringLayout.WEST, rprtpasswordlabel); 
         layout.putConstraint(SpringLayout.NORTH, previousButton,8, SpringLayout.SOUTH, rprtpasswordlabel);
         
-        register = new JButton("Submit");
-        register.addActionListener(new registerButtonAL());
-        this.add(register);
-        layout.putConstraint(SpringLayout.WEST, register, 6, SpringLayout.EAST, previousButton); 
-        layout.putConstraint(SpringLayout.NORTH, register,8, SpringLayout.SOUTH, rprtpasswordlabel);
+        registerButton = new JButton("Register");
+        registerButton.addActionListener(new registerButtonAL());
+        this.add(registerButton);
+        layout.putConstraint(SpringLayout.WEST, registerButton, 6, SpringLayout.EAST, previousButton); 
+        layout.putConstraint(SpringLayout.NORTH, registerButton,8, SpringLayout.SOUTH, rprtpasswordlabel);
     }
     
     private class registerButtonAL implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             int userID;
             String name = nameField.getText();
@@ -137,6 +131,7 @@ public class Register extends JPanel {
     }
     
     private class previousButtonAL implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
                 CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
                 cl.first(ET4437ChatClient.cardHolder);
@@ -145,6 +140,7 @@ public class Register extends JPanel {
     
     // Action Listener class for the TextFields and PasswordField
     private class TextFieldAL implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == nameField) {
                 System.out.println("Your name is: " + nameField.getText());
@@ -159,23 +155,5 @@ public class Register extends JPanel {
                 System.out.println("Error: Textfield not found!");
             }
         }
-    }
-        
-    private boolean validateInput() {
-        boolean isInputValid = true;
-        String usernameRegex = "^[a-zA-Z0-9._-]{3,30}$";
-        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z]).{8,64}$"; // at least one number and lower case letter. Must be at least 8 chars and max 64 chars
-        String passwordStr = Arrays.toString(passwordField.getPassword());
-        String rptPasswordStr = Arrays.toString(rptPasswordField.getPassword());
-
-        if (!Pattern.matches(usernameRegex, nameField.getText())) {
-            isInputValid = false;
-        } else if(!Pattern.matches(passwordRegex, passwordStr)) {
-            isInputValid = false;
-        } else if(!passwordStr.matches(rptPasswordStr)) {
-            isInputValid = false;
-        }
-
-        return isInputValid;
     }
 }

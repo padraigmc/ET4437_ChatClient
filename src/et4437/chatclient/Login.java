@@ -7,23 +7,14 @@ package et4437.chatclient;
 
 import chatwebservice.ChatWebService;
 import chatwebservice.ChatWebService_Service;
-import static et4437.chatclient.ET4437ChatClient.cardHolder;
-import static et4437.chatclient.ET4437ChatClient.userID;
 import java.awt.CardLayout;
-import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -40,7 +31,7 @@ public class Login extends JPanel {
     private JPasswordField password;
     private JLabel userlabel;
     private JLabel passwordlabel;
-    private JButton login;
+    private JButton loginButton;
     private JButton previousButton;
     
     Login() {
@@ -82,21 +73,23 @@ public class Login extends JPanel {
         layout.putConstraint(SpringLayout.WEST, previousButton,6, SpringLayout.WEST, passwordlabel); 
         layout.putConstraint(SpringLayout.NORTH, previousButton,8, SpringLayout.SOUTH, passwordlabel);
         
-        login = new JButton("Login");
-        login.addActionListener(new loginButtonAL());
-        this.add(login);
-        layout.putConstraint(SpringLayout.WEST, login, 6, SpringLayout.EAST, previousButton); 
-        layout.putConstraint(SpringLayout.NORTH, login,8, SpringLayout.SOUTH, passwordlabel);
+        loginButton = new JButton("Login");
+        loginButton.addActionListener(new loginButtonAL());
+        this.add(loginButton);
+        layout.putConstraint(SpringLayout.WEST, loginButton, 6, SpringLayout.EAST, previousButton); 
+        layout.putConstraint(SpringLayout.NORTH, loginButton,8, SpringLayout.SOUTH, passwordlabel);
     }
     
     private class previousButtonAL implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
-                CardLayout cl = (CardLayout) (cardHolder.getLayout());
-                cl.first(cardHolder);
+                CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
+                cl.first(ET4437ChatClient.cardHolder);
         }
     }
         
     private class loginButtonAL implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             String uname = username.getText();
             String pword = Arrays.toString(password.getPassword());
@@ -107,17 +100,19 @@ public class Login extends JPanel {
                 System.out.println("Login successful!");
                 ET4437ChatClient.userID = userID;
                 ET4437ChatClient.sessionID = chatServiceProxy.newSession(userID);
-                CardLayout cl = (CardLayout) (cardHolder.getLayout());
-                cl.next(cardHolder);
+                ET4437ChatClient.chatPanel = new ChatGui();
+                CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
+                ET4437ChatClient.cardHolder.add(ET4437ChatClient.chatPanel);
+                cl.last(ET4437ChatClient.cardHolder);
             } else {
                 System.out.println("Login failed!");
             }
-             
         }
     }
     
     // Action Listener class for the TextFields and PasswordField
     public class TextFieldAL implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
         
             if (e.getSource() == username) {

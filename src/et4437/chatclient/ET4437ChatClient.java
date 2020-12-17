@@ -1,10 +1,10 @@
 package et4437.chatclient;
- 
+
 import chatwebservice.ChatWebService;
 import chatwebservice.ChatWebService_Service;
+
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
 import javax.swing.*;
 
 /**
@@ -14,12 +14,19 @@ import javax.swing.*;
  */
 public class ET4437ChatClient {
     
+    private static ChatWebService chatServiceProxy;
     public static JPanel cardHolder; // a panel that uses CardLayout
     private JButton register;
     private JButton login;
     public static int userID;
     public static int sessionID;
     
+    public JPanel loginPanel;
+    public JPanel registerPanel;
+    public static JPanel chatPanel;
+    
+    private final String FRAME_TITLE = "ezChat";
+
     // card commands
     final String FIRST = "FIRST";
     final String NEXT = "NEXT";
@@ -27,8 +34,13 @@ public class ET4437ChatClient {
     final String LAST = "LAST";
     final String LOGIN = "LOGIN";
     
+    public static final Font BUTTON_FONT = new Font("Sego UI", Font.PLAIN, 14);
+    
     ET4437ChatClient() {        
-        JFrame frame = new JFrame("Project Messenger");
+        ChatWebService_Service service = new ChatWebService_Service();
+        chatServiceProxy = service.getChatWebServicePort();
+        
+        JFrame frame = new JFrame(FRAME_TITLE);
         SpringLayout layout = new SpringLayout();
  
         //Create the "cards".
@@ -40,31 +52,30 @@ public class ET4437ChatClient {
         login.setActionCommand(NEXT);
         login.addActionListener(cal);
         homePanel.add(login);
-        layout.putConstraint(SpringLayout.WEST, login,70, SpringLayout.WEST, homePanel); 
-        layout.putConstraint(SpringLayout.NORTH, login,8+90, SpringLayout.NORTH, homePanel);
         
         register = new JButton("Register Here");
         register.setActionCommand(LAST);
         register.addActionListener(cal);
         homePanel.add(register);
-        layout.putConstraint(SpringLayout.WEST, register,180, SpringLayout.WEST, homePanel); 
-        layout.putConstraint(SpringLayout.NORTH, register,8+90, SpringLayout.NORTH, homePanel);
+        
+        layout.putConstraint(SpringLayout.WEST, login, 10, SpringLayout.WEST, homePanel); 
+        layout.putConstraint(SpringLayout.NORTH, login,10, SpringLayout.NORTH, homePanel);
+        
+        layout.putConstraint(SpringLayout.WEST, register,10, SpringLayout.EAST, login); 
+        layout.putConstraint(SpringLayout.NORTH, register,10, SpringLayout.NORTH, homePanel);
  
-        JPanel loginPanel = new Login();
-        JPanel registerPanel = new Register();
-        JPanel chatPanel = new ChatGui();
+        loginPanel = new Login();
+        registerPanel = new Register();
         
         cardHolder = new JPanel(new CardLayout());
         cardHolder.add(homePanel, "Login/Register");
         cardHolder.add(loginPanel, "Login");
-        cardHolder.add(chatPanel, "Chat");
         cardHolder.add(registerPanel, "Register");
- 
         Container pane = frame.getContentPane();
         pane.add(cardHolder, BorderLayout.CENTER);
  
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(450, 450);
+        frame.setSize(1100, 700);
         frame.setVisible(true);
     }
     
@@ -74,7 +85,8 @@ public class ET4437ChatClient {
             String cmd = e.getActionCommand();
             if (cmd.equals(FIRST)) {
                 cl.first(cardHolder);
-            } else if (cmd.equals(NEXT)) {
+            } else if (cmd.equals(NEXT)) { // user logged in
+                
                 cl.next(cardHolder);
             } else if (cmd.equals(PREVIOUS)) {
                 cl.previous(cardHolder);
@@ -87,4 +99,5 @@ public class ET4437ChatClient {
     public static void main(String[] args) {
         ET4437ChatClient chatClient = new ET4437ChatClient();
     }
+    
 }
