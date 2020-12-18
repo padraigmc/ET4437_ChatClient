@@ -7,7 +7,9 @@ package et4437.chatclient;
 
 import chatwebservice.ChatWebService;
 import chatwebservice.ChatWebService_Service;
+import static et4437.chatclient.ET4437ChatClient.FONT_LARGE;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -15,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -26,17 +29,18 @@ import javax.swing.SpringLayout;
 public class Login extends JPanel {
     
     private static ChatWebService chatServiceProxy;
-    private SpringLayout layout;
+    private SpringLayout springLayout;
     private JTextField username;
     private JPasswordField password;
     private JLabel userlabel;
     private JLabel passwordlabel;
+    private JTextArea errorLabel;
     private JButton loginButton;
     private JButton previousButton;
     
     Login() {
-        layout = new SpringLayout(); 
-        this.setLayout(layout);
+        springLayout = new SpringLayout(); 
+        this.setLayout(springLayout);
         
         ChatWebService_Service service = new ChatWebService_Service();
         chatServiceProxy = service.getChatWebServicePort();
@@ -46,51 +50,68 @@ public class Login extends JPanel {
     
     private void buildGui() {
         userlabel = new JLabel("User:");
+        userlabel.setFont(ET4437ChatClient.FONT_LARGE);
         this.add(userlabel);
+        
         username = new JTextField(30);
+        username.setFont(ET4437ChatClient.FONT_LARGE);
         username.setToolTipText("Type your username");
-        //sername.addActionListener(new Login.TextFieldAL());
         this.add(username);
-        layout.putConstraint(SpringLayout.WEST, userlabel,6, SpringLayout.WEST, this); 
-        layout.putConstraint(SpringLayout.NORTH, userlabel,8+30, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.WEST, username,70, SpringLayout.WEST, userlabel); 
-        layout.putConstraint(SpringLayout.NORTH, username, 1, SpringLayout.NORTH, userlabel);
+        
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, username, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.VERTICAL_CENTER, username, -75, SpringLayout.VERTICAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.NORTH, userlabel, 0, SpringLayout.NORTH, username);
+        springLayout.putConstraint(SpringLayout.EAST, userlabel, -30, SpringLayout.WEST, username);
         
         passwordlabel = new JLabel("Password:");
+        passwordlabel.setFont(ET4437ChatClient.FONT_LARGE);
         this.add(passwordlabel);      
         password = new JPasswordField(30);
+        password.setFont(ET4437ChatClient.FONT_LARGE);
         password.setToolTipText("Type your password");
-        //password.addActionListener(new Login.TextFieldAL());
         this.add(password);
-        layout.putConstraint(SpringLayout.WEST, passwordlabel,6, SpringLayout.WEST, this); 
-        layout.putConstraint(SpringLayout.NORTH, passwordlabel,8+60, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.WEST, password,70, SpringLayout.WEST, passwordlabel); 
-        layout.putConstraint(SpringLayout.NORTH, password, 1, SpringLayout.NORTH, passwordlabel);   
+        
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, password, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.VERTICAL_CENTER, password, 0, SpringLayout.VERTICAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.NORTH, passwordlabel, 0, SpringLayout.NORTH, password);
+        springLayout.putConstraint(SpringLayout.EAST, passwordlabel, -30, SpringLayout.WEST, password);
+        
+        errorLabel = new JTextArea("");
+        errorLabel.setFont(FONT_LARGE);
+        errorLabel.setForeground(Color.RED);
+        this.add(errorLabel);
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, errorLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.SOUTH, errorLabel, -200, SpringLayout.SOUTH, this);
         
         previousButton = new JButton("Previous");
         previousButton.addActionListener(new previousButtonAL());
+        previousButton.setFont(ET4437ChatClient.FONT_LARGE);
         this.add(previousButton);
-        layout.putConstraint(SpringLayout.WEST, previousButton,6, SpringLayout.WEST, passwordlabel); 
-        layout.putConstraint(SpringLayout.NORTH, previousButton,8, SpringLayout.SOUTH, passwordlabel);
+        
+        springLayout.putConstraint(SpringLayout.SOUTH, previousButton, -20, SpringLayout.SOUTH, this);
+        springLayout.putConstraint(SpringLayout.WEST, previousButton, 75, SpringLayout.WEST, this);
         
         loginButton = new JButton("Login");
-        loginButton.addActionListener(new loginButtonAL());
+        loginButton.addActionListener(new LoginButtonAL());
+        loginButton.setFont(ET4437ChatClient.FONT_LARGE);
         this.add(loginButton);
-        layout.putConstraint(SpringLayout.WEST, loginButton, 6, SpringLayout.EAST, previousButton); 
-        layout.putConstraint(SpringLayout.NORTH, loginButton,8, SpringLayout.SOUTH, passwordlabel);
+        
+        springLayout.putConstraint(SpringLayout.NORTH, loginButton, 0, SpringLayout.NORTH, previousButton);
+        springLayout.putConstraint(SpringLayout.EAST, loginButton, -75, SpringLayout.EAST, this);
     }
     
     private class previousButtonAL implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-                CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
-                cl.first(ET4437ChatClient.cardHolder);
+            CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
+            cl.first(ET4437ChatClient.cardHolder);
         }
     }
         
-    private class loginButtonAL implements ActionListener {
+    private class LoginButtonAL implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            errorLabel.setText("");
             String uname = username.getText();
             String pword = Arrays.toString(password.getPassword());
 
@@ -106,6 +127,7 @@ public class Login extends JPanel {
                 cl.last(ET4437ChatClient.cardHolder);
             } else {
                 System.out.println("Login failed!");
+                errorLabel.setText(Validate.LOGIN_FAILED);
             }
         }
     }

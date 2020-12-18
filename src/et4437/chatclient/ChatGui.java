@@ -14,6 +14,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -22,7 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * @author Padraig McCarthy - 18227465@studentmail.ul.ie
@@ -41,6 +41,7 @@ public class ChatGui extends JPanel {
     private final Dimension CHAT_BOX_DIMENSION = new Dimension(425, 700);
     
     // GUI stuff
+    private JTextArea unicastTitle;
     private JTextArea unicastChatHistory;
     private JTextField unicastMessageBox;
     private JButton sendUnicast;
@@ -84,24 +85,39 @@ public class ChatGui extends JPanel {
             this.setLayout(springLayout);
             List<String> registeredUsers = chatServiceProxy.getUsers(true);
             
+            JButton logOutButton = new JButton("Log Out");
+            logOutButton.addActionListener(new LogOutButtonAL());
+            logOutButton.setFont(ET4437ChatClient.FONT_REGULAR);
+            logOutButton.setBackground(Color.red);
+            this.add(logOutButton);
+            springLayout.putConstraint(springLayout.NORTH, logOutButton, 0, springLayout.NORTH, this);
+            springLayout.putConstraint(springLayout.EAST, logOutButton, 0, springLayout.EAST, this);
+            springLayout.putConstraint(springLayout.WEST, logOutButton, 0, springLayout.WEST, this);
+            
             JPanel usernameButtons = new ListOfUsers(registeredUsers);
-            usernameButtons.setBackground(Color.RED);
             JScrollPane listOfUsers = new JScrollPane(usernameButtons,
                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            listOfUsers.setBackground(Color.BLUE);
             listOfUsers.setMinimumSize(new Dimension(160, 200));
             listOfUsers.setPreferredSize(new Dimension(160, 200));
         
             this.add(listOfUsers);
             
-            springLayout.putConstraint(springLayout.NORTH, listOfUsers, 0, springLayout.NORTH, this);
+            springLayout.putConstraint(springLayout.NORTH, listOfUsers, 0, springLayout.SOUTH, logOutButton);
             springLayout.putConstraint(springLayout.SOUTH, listOfUsers, 0, springLayout.SOUTH, this);
             springLayout.putConstraint(springLayout.EAST, listOfUsers, 0, springLayout.EAST, this);
             springLayout.putConstraint(springLayout.WEST, listOfUsers, 0, springLayout.WEST, this);
                      
             setSize(400,400);
             setVisible(true);
+        }
+        
+        public class LogOutButtonAL implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chatServiceProxy.logOut(ET4437ChatClient.userID, ET4437ChatClient.sessionID);
+                System.exit(1);
+            }
         }
         
         public class ListOfUsers extends JPanel {
@@ -112,7 +128,7 @@ public class ChatGui extends JPanel {
                 {
                     JButton usernameButton = new JButton(user);
                     usernameButton.addActionListener(usernameButtonAL);
-                    usernameButton.setFont(ET4437ChatClient.BUTTON_FONT);
+                    usernameButton.setFont(ET4437ChatClient.FONT_REGULAR);
                     usernameButton.setMinimumSize(new Dimension(250, 50));
                     usernameButton.setMaximumSize(new Dimension(250, 50));
                     this.add(usernameButton);       
@@ -143,19 +159,26 @@ public class ChatGui extends JPanel {
         }
         
         public void buildGui() {
+            unicastTitle = new JTextArea("Direct Message");
+            unicastChatHistory.setEditable(false);
+            unicastChatHistory.setWrapStyleWord(true);
+            unicastChatHistory.setFont(ET4437ChatClient.FONT_REGULAR);
+            unicastChatHistory.setMargin(new Insets(5,5,5,5));
+            
+            
             unicastChatHistory = new JTextArea();
             unicastChatHistory.setEditable(false);
             unicastChatHistory.setWrapStyleWord(true);
-            unicastChatHistory.setFont(ET4437ChatClient.BUTTON_FONT);
+            unicastChatHistory.setFont(ET4437ChatClient.FONT_REGULAR);
             unicastChatHistory.setMargin(new Insets(5,5,5,5));
             
             JScrollPane chatHistoryScrollPane = new JScrollPane(unicastChatHistory);
             
             unicastMessageBox = new JTextField(400);
-            unicastMessageBox.setFont(ET4437ChatClient.BUTTON_FONT);
+            unicastMessageBox.setFont(ET4437ChatClient.FONT_REGULAR);
             
             sendUnicast = new JButton("Send");
-            sendUnicast.setFont(ET4437ChatClient.BUTTON_FONT);
+            sendUnicast.setFont(ET4437ChatClient.FONT_REGULAR);
             sendUnicast.addActionListener(new UnicastSendButtonAL());
 
             // add unicast chatbox elements to JPanel
@@ -262,16 +285,16 @@ public class ChatGui extends JPanel {
             multicastChatHistory = new JTextArea();
             multicastChatHistory.setEditable(false);
             multicastChatHistory.setWrapStyleWord(true);
-            multicastChatHistory.setFont(ET4437ChatClient.BUTTON_FONT);
+            multicastChatHistory.setFont(ET4437ChatClient.FONT_REGULAR);
             multicastChatHistory.setMargin(new Insets(5,5,5,5));
             
             JScrollPane multicastScrollPane = new JScrollPane(multicastChatHistory);
             
             multicastMessageBox = new JTextField(400);
-            multicastMessageBox.setFont(ET4437ChatClient.BUTTON_FONT);
+            multicastMessageBox.setFont(ET4437ChatClient.FONT_REGULAR);
             
             sendMulticast = new JButton("Send");
-            sendMulticast.setFont(ET4437ChatClient.BUTTON_FONT);
+            sendMulticast.setFont(ET4437ChatClient.FONT_REGULAR);
             sendMulticast.addActionListener(new MulticastSendButtonAL());
 
             // add multicast chatbox elements to JPanel

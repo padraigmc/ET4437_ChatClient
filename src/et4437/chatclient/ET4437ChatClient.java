@@ -1,10 +1,11 @@
 package et4437.chatclient;
 
-import chatwebservice.ChatWebService;
-import chatwebservice.ChatWebService_Service;
-
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -14,7 +15,7 @@ import javax.swing.*;
  */
 public class ET4437ChatClient {
     
-    private static ChatWebService chatServiceProxy;
+    public static JFrame frame;
     public static JPanel cardHolder; // a panel that uses CardLayout
     private JButton register;
     private JButton login;
@@ -25,52 +26,60 @@ public class ET4437ChatClient {
     public JPanel registerPanel;
     public static JPanel chatPanel;
     
-    private final String FRAME_TITLE = "ezChat";
+    private final String FRAME_TITLE = "Play Chat";
 
-    // card commands
+    // card layout commands
     final String FIRST = "FIRST";
     final String NEXT = "NEXT";
     final String PREVIOUS = "PREVIOUS";
     final String LAST = "LAST";
     final String LOGIN = "LOGIN";
     
-    public static final Font BUTTON_FONT = new Font("Sego UI", Font.PLAIN, 14);
+    public static final Font FONT_REGULAR = new Font("Sego UI", Font.PLAIN, 14);
+    public static final Font FONT_LARGE = new Font("Sego UI", Font.PLAIN, 26);
     
-    ET4437ChatClient() {        
-        ChatWebService_Service service = new ChatWebService_Service();
-        chatServiceProxy = service.getChatWebServicePort();
-        
-        JFrame frame = new JFrame(FRAME_TITLE);
+    ET4437ChatClient() {
+        frame = new JFrame(FRAME_TITLE);
         SpringLayout layout = new SpringLayout();
  
-        //Create the "cards".
+        // Create the "cards".
         JPanel homePanel = new JPanel();
         homePanel.setLayout(layout);
-        ControlActionListenter cal = new ControlActionListenter();
+        FlowControlAL flowControlAL = new FlowControlAL();
         
+        // login button
         login = new JButton("Login Here");
         login.setActionCommand(NEXT);
-        login.addActionListener(cal);
+        login.addActionListener(flowControlAL);
+        login.setFont(FONT_LARGE);
         homePanel.add(login);
         
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, login, 0, SpringLayout.VERTICAL_CENTER, homePanel);
+        layout.putConstraint(SpringLayout.EAST, login, -20, SpringLayout.HORIZONTAL_CENTER, homePanel); 
+        //layout.putConstraint(SpringLayout.NORTH, login, 10, SpringLayout.NORTH, homePanel);
+        
+        // register button
         register = new JButton("Register Here");
         register.setActionCommand(LAST);
-        register.addActionListener(cal);
+        register.addActionListener(flowControlAL);
+        register.setFont(FONT_LARGE);
         homePanel.add(register);
         
-        layout.putConstraint(SpringLayout.WEST, login, 10, SpringLayout.WEST, homePanel); 
-        layout.putConstraint(SpringLayout.NORTH, login,10, SpringLayout.NORTH, homePanel);
-        
-        layout.putConstraint(SpringLayout.WEST, register,10, SpringLayout.EAST, login); 
-        layout.putConstraint(SpringLayout.NORTH, register,10, SpringLayout.NORTH, homePanel);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, register, 0, SpringLayout.VERTICAL_CENTER, login);
+        layout.putConstraint(SpringLayout.WEST, register, 20, SpringLayout.HORIZONTAL_CENTER, homePanel); 
+        //layout.putConstraint(SpringLayout.NORTH, register,10, SpringLayout.NORTH, homePanel);
  
+        // create login and register JPanels
         loginPanel = new Login();
         registerPanel = new Register();
         
+        // create JPanel with card layour and add register and login panels
         cardHolder = new JPanel(new CardLayout());
         cardHolder.add(homePanel, "Login/Register");
         cardHolder.add(loginPanel, "Login");
         cardHolder.add(registerPanel, "Register");
+        
+        // add cardHolder JPanel to frame
         Container pane = frame.getContentPane();
         pane.add(cardHolder, BorderLayout.CENTER);
  
@@ -79,19 +88,21 @@ public class ET4437ChatClient {
         frame.setVisible(true);
     }
     
-    public class ControlActionListenter implements ActionListener {
+    // ActionListener for controlling cardLayout
+    public class FlowControlAL implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            CardLayout cl = (CardLayout) (cardHolder.getLayout());
+            
+            CardLayout cardLayout = (CardLayout) (cardHolder.getLayout());
             String cmd = e.getActionCommand();
             if (cmd.equals(FIRST)) {
-                cl.first(cardHolder);
+                cardLayout.first(cardHolder);
             } else if (cmd.equals(NEXT)) { // user logged in
                 
-                cl.next(cardHolder);
+                cardLayout.next(cardHolder);
             } else if (cmd.equals(PREVIOUS)) {
-                cl.previous(cardHolder);
+                cardLayout.previous(cardHolder);
             } else if (cmd.equals(LAST)) {
-                cl.last(cardHolder);
+                cardLayout.last(cardHolder);
             }
         }
     }
@@ -99,5 +110,4 @@ public class ET4437ChatClient {
     public static void main(String[] args) {
         ET4437ChatClient chatClient = new ET4437ChatClient();
     }
-    
 }

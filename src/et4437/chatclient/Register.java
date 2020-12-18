@@ -7,15 +7,18 @@ package et4437.chatclient;
 
 import chatwebservice.ChatWebService;
 import chatwebservice.ChatWebService_Service;
+import static et4437.chatclient.ET4437ChatClient.FONT_LARGE;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import java.util.regex.Pattern;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -27,21 +30,22 @@ import javax.swing.SpringLayout;
 public class Register extends JPanel {
     
     private static ChatWebService chatServiceProxy;
-    private SpringLayout layout;
+    private SpringLayout springLayout;
     private JButton registerButton;
     private JButton previousButton;
     private JTextField nameField;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JPasswordField rptPasswordField;
+    private JTextArea errorLabel;
     private JLabel namelabel;
     private JLabel userlabel;
-    private JLabel rprtpasswordlabel;
+    private JLabel rptPasswordLabel;
     private JLabel passwordlabel; 
     
     public Register() {
-        layout = new SpringLayout(); 
-        this.setLayout(layout);
+        springLayout = new SpringLayout(); 
+        this.setLayout(springLayout);
         
         ChatWebService_Service service = new ChatWebService_Service();
         chatServiceProxy = service.getChatWebServicePort();
@@ -51,61 +55,87 @@ public class Register extends JPanel {
     }
     
     private void buildGui() {
+        // label for name text field
         namelabel = new JLabel("Name:");
+        namelabel.setFont(FONT_LARGE);
         this.add(namelabel); 
+        
+        // name text field
         nameField = new JTextField(30);
+        nameField.setFont(FONT_LARGE);
         nameField.setToolTipText("Type your name");
         nameField.addActionListener(new Register.TextFieldAL());
         this.add(nameField);
-        layout.putConstraint(SpringLayout.WEST, namelabel,6, SpringLayout.WEST, this); 
-        layout.putConstraint(SpringLayout.NORTH, namelabel,8, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.WEST, nameField,70, SpringLayout.WEST, namelabel); 
-        layout.putConstraint(SpringLayout.NORTH, nameField, 1, SpringLayout.NORTH, namelabel); 
+        springLayout.putConstraint(SpringLayout.NORTH, nameField, 100, SpringLayout.NORTH, this);
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, nameField, 60, SpringLayout.HORIZONTAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.NORTH, namelabel, 0, SpringLayout.NORTH, nameField);
+        springLayout.putConstraint(SpringLayout.EAST, namelabel, -30, SpringLayout.WEST, nameField);
         
+        // label for username field
         userlabel = new JLabel("User:");
+        userlabel.setFont(FONT_LARGE);
         this.add(userlabel);
+        
+        
         usernameField = new JTextField(30);
+        usernameField.setFont(FONT_LARGE);
         usernameField.setToolTipText("Type your username");
         usernameField.addActionListener(new Register.TextFieldAL());
         this.add(usernameField);
-        layout.putConstraint(SpringLayout.WEST, userlabel,6, SpringLayout.WEST, this); 
-        layout.putConstraint(SpringLayout.NORTH, userlabel,8+30, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.WEST, usernameField,70, SpringLayout.WEST, userlabel); 
-        layout.putConstraint(SpringLayout.NORTH, usernameField, 1, SpringLayout.NORTH, userlabel);
+        springLayout.putConstraint(SpringLayout.NORTH, usernameField, 30, SpringLayout.SOUTH, nameField);
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, usernameField, 0, SpringLayout.HORIZONTAL_CENTER, nameField);
+        springLayout.putConstraint(SpringLayout.NORTH, userlabel, 0, SpringLayout.NORTH, usernameField);
+        springLayout.putConstraint(SpringLayout.EAST, userlabel, -30, SpringLayout.WEST, usernameField);
         
         passwordlabel = new JLabel("Password:");
+        passwordlabel.setFont(FONT_LARGE);
         this.add(passwordlabel);      
         passwordField = new JPasswordField(30);
+        passwordField.setFont(FONT_LARGE);
         passwordField.setToolTipText("Type your password");
         passwordField.addActionListener(new Register.TextFieldAL());
-        this.add(passwordField);
-        layout.putConstraint(SpringLayout.WEST, passwordlabel,6, SpringLayout.WEST, this); 
-        layout.putConstraint(SpringLayout.NORTH, passwordlabel,8+60, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.WEST, passwordField,70, SpringLayout.WEST, passwordlabel); 
-        layout.putConstraint(SpringLayout.NORTH, passwordField, 1, SpringLayout.NORTH, passwordlabel);   
+        this.add(passwordField);        
+        springLayout.putConstraint(SpringLayout.NORTH, passwordField, 30, SpringLayout.SOUTH, usernameField);
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, passwordField, 0, SpringLayout.HORIZONTAL_CENTER, nameField);
+        springLayout.putConstraint(SpringLayout.NORTH, passwordlabel, 0, SpringLayout.NORTH, passwordField);
+        springLayout.putConstraint(SpringLayout.EAST, passwordlabel, -30, SpringLayout.WEST, passwordField);
+         
        
-        rprtpasswordlabel = new JLabel("Confirm Password:");
-        this.add(rprtpasswordlabel);      
+        rptPasswordLabel = new JLabel("Confirm Password:");
+        rptPasswordLabel.setFont(FONT_LARGE);
+        this.add(rptPasswordLabel);      
         rptPasswordField = new JPasswordField(30);
+        rptPasswordField.setFont(FONT_LARGE);
         rptPasswordField.setToolTipText("Type your password");
         rptPasswordField.addActionListener(new Register.TextFieldAL());
         this.add(rptPasswordField);
-        layout.putConstraint(SpringLayout.WEST, rprtpasswordlabel,6, SpringLayout.WEST, this); 
-        layout.putConstraint(SpringLayout.NORTH, rprtpasswordlabel,8+90, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.WEST, rptPasswordField,120, SpringLayout.WEST, rprtpasswordlabel); 
-        layout.putConstraint(SpringLayout.NORTH, rptPasswordField, 1, SpringLayout.NORTH, rprtpasswordlabel);   
+        springLayout.putConstraint(SpringLayout.NORTH, rptPasswordField, 30, SpringLayout.SOUTH, passwordField);
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, rptPasswordField, 0, SpringLayout.HORIZONTAL_CENTER, nameField);
+        springLayout.putConstraint(SpringLayout.NORTH, rptPasswordLabel, 0, SpringLayout.NORTH, rptPasswordField);
+        springLayout.putConstraint(SpringLayout.EAST, rptPasswordLabel, -30, SpringLayout.WEST, rptPasswordField);
+        
+        errorLabel = new JTextArea("");
+        errorLabel.setFont(FONT_LARGE);
+        errorLabel.setForeground(Color.RED);
+        this.add(errorLabel);
+        springLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, errorLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+        springLayout.putConstraint(SpringLayout.SOUTH, errorLabel, -200, SpringLayout.SOUTH, this);
         
         previousButton = new JButton("Previous");
+        previousButton.setFont(FONT_LARGE);
         previousButton.addActionListener(new previousButtonAL());
         this.add(previousButton);
-        layout.putConstraint(SpringLayout.WEST, previousButton,6, SpringLayout.WEST, rprtpasswordlabel); 
-        layout.putConstraint(SpringLayout.NORTH, previousButton,8, SpringLayout.SOUTH, rprtpasswordlabel);
+        springLayout.putConstraint(SpringLayout.SOUTH, previousButton, -20, SpringLayout.SOUTH, this); 
+        springLayout.putConstraint(SpringLayout.WEST, previousButton, 75, SpringLayout.WEST, this);
         
         registerButton = new JButton("Register");
+        registerButton.setFont(FONT_LARGE);
         registerButton.addActionListener(new registerButtonAL());
         this.add(registerButton);
-        layout.putConstraint(SpringLayout.WEST, registerButton, 6, SpringLayout.EAST, previousButton); 
-        layout.putConstraint(SpringLayout.NORTH, registerButton,8, SpringLayout.SOUTH, rprtpasswordlabel);
+        springLayout.putConstraint(SpringLayout.NORTH, registerButton, 0, SpringLayout.NORTH, previousButton); 
+        springLayout.putConstraint(SpringLayout.EAST, registerButton, -75, SpringLayout.EAST, this);
+        
+        ET4437ChatClient.frame.getRootPane().setDefaultButton(registerButton);
     }
     
     private class registerButtonAL implements ActionListener {
@@ -116,16 +146,21 @@ public class Register extends JPanel {
             String username = usernameField.getText();
             String password = Arrays.toString(passwordField.getPassword());
             String rptPassword = Arrays.toString(rptPasswordField.getPassword());
+            String inputError = Validate.validateRegister(username, password, rptPassword);
             
-            userID = chatServiceProxy.registerUser(name, username, password, rptPassword);
+            if (inputError == "") {
+                userID = chatServiceProxy.registerUser(name, username, password, rptPassword);
             
-            if (userID > 0) {
-                System.out.println("Registration success!");
-                ET4437ChatClient.userID = userID;
-                CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
-                cl.first(ET4437ChatClient.cardHolder);
+                if (userID > 0) {
+                    System.out.println("Registration success!");
+                    ET4437ChatClient.userID = userID;
+                    CardLayout cl = (CardLayout) (ET4437ChatClient.cardHolder.getLayout());
+                    cl.first(ET4437ChatClient.cardHolder);
+                } else {
+                    System.out.println("Registration failed!");
+                }
             } else {
-                System.out.println("Registration failed!");
+                errorLabel.setText(inputError);
             }
         }
     }
