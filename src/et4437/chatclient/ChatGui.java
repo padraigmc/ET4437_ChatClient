@@ -160,10 +160,16 @@ public class ChatGui extends JPanel {
         
         public void buildGui() {
             unicastTitle = new JTextArea("Direct Message");
-            unicastChatHistory.setEditable(false);
-            unicastChatHistory.setWrapStyleWord(true);
-            unicastChatHistory.setFont(ET4437ChatClient.FONT_REGULAR);
-            unicastChatHistory.setMargin(new Insets(5,5,5,5));
+            unicastTitle.setEditable(false);
+            unicastTitle.setWrapStyleWord(true);
+            unicastTitle.setFont(ET4437ChatClient.FONT_REGULAR);
+            unicastTitle.setBackground(Color.black);
+            unicastTitle.setForeground(Color.white);
+            unicastTitle.setMargin(new Insets(5,5,5,5));
+            this.add(unicastTitle);
+            springLayout.putConstraint(SpringLayout.NORTH, unicastTitle, 0, SpringLayout.NORTH, this);
+            springLayout.putConstraint(SpringLayout.EAST, unicastTitle, 0, SpringLayout.EAST, this);
+            springLayout.putConstraint(SpringLayout.WEST, unicastTitle, 0, SpringLayout.WEST, this);
             
             
             unicastChatHistory = new JTextArea();
@@ -187,7 +193,7 @@ public class ChatGui extends JPanel {
             this.add(sendUnicast);
             
             // set unicast chatbox element contraints
-            springLayout.putConstraint(SpringLayout.NORTH, chatHistoryScrollPane, 0, SpringLayout.NORTH, this);
+            springLayout.putConstraint(SpringLayout.NORTH, chatHistoryScrollPane, 0, SpringLayout.SOUTH, unicastTitle);
             springLayout.putConstraint(SpringLayout.SOUTH, chatHistoryScrollPane, 0, SpringLayout.NORTH, unicastMessageBox);
             springLayout.putConstraint(SpringLayout.EAST, chatHistoryScrollPane, 0, SpringLayout.EAST, this);
             springLayout.putConstraint(SpringLayout.WEST, chatHistoryScrollPane, 0, SpringLayout.WEST, this);
