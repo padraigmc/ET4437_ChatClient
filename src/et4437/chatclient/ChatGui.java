@@ -143,6 +143,7 @@ public class ChatGui extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     unicastChatHistory.setText(""); // clear chat box
                     selectedUsernameBtn = (JButton) e.getSource();
+                    unicastTitle.setText(selectedUsernameBtn.getText());
                     System.out.println(selectedUsernameBtn.getText() + " selected");
                     UnicastMessageUpdater uniMessageUpdater = new UnicastMessageUpdater(selectedUsernameBtn.getText());
                     uniMessageUpdater.start();
@@ -159,7 +160,7 @@ public class ChatGui extends JPanel {
         }
         
         public void buildGui() {
-            unicastTitle = new JTextArea("Direct Message");
+            unicastTitle = new JTextArea("Please select a user.");
             unicastTitle.setEditable(false);
             unicastTitle.setWrapStyleWord(true);
             unicastTitle.setFont(ET4437ChatClient.FONT_REGULAR);
@@ -288,6 +289,18 @@ public class ChatGui extends JPanel {
         }
         
         public void buildGui() {
+            JTextArea multicastTitle = new JTextArea("Public Chat");
+            multicastTitle.setEditable(false);
+            multicastTitle.setWrapStyleWord(true);
+            multicastTitle.setFont(ET4437ChatClient.FONT_REGULAR);
+            multicastTitle.setBackground(Color.black);
+            multicastTitle.setForeground(Color.white);
+            multicastTitle.setMargin(new Insets(5,5,5,5));
+            this.add(multicastTitle);
+            springLayout.putConstraint(SpringLayout.NORTH, multicastTitle, 0, SpringLayout.NORTH, this);
+            springLayout.putConstraint(SpringLayout.EAST, multicastTitle, 0, SpringLayout.EAST, this);
+            springLayout.putConstraint(SpringLayout.WEST, multicastTitle, 0, SpringLayout.WEST, this);
+            
             multicastChatHistory = new JTextArea();
             multicastChatHistory.setEditable(false);
             multicastChatHistory.setWrapStyleWord(true);
@@ -309,7 +322,7 @@ public class ChatGui extends JPanel {
             this.add(sendMulticast);
             
             // set multicast chatbox element contraints
-            springLayout.putConstraint(SpringLayout.NORTH, multicastScrollPane, 0, SpringLayout.NORTH, this);
+            springLayout.putConstraint(SpringLayout.NORTH, multicastScrollPane, 0, SpringLayout.SOUTH, multicastTitle);
             springLayout.putConstraint(SpringLayout.SOUTH, multicastScrollPane, 0, SpringLayout.NORTH, multicastMessageBox);
             springLayout.putConstraint(SpringLayout.EAST, multicastScrollPane, 0, SpringLayout.EAST, this);
             springLayout.putConstraint(SpringLayout.WEST, multicastScrollPane, 0, SpringLayout.WEST, this);
